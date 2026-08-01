@@ -13,7 +13,7 @@ fi
 sudo ufw disable
 
 # Reset UFW to default (optional but recommended):
-sudo ufw reset
+sudo ufw --force reset
 
 # Deny all incoming connections:
 sudo ufw default deny incoming
@@ -25,7 +25,7 @@ sudo ufw default allow outgoing
 sudo ufw allow from "$client_ip" to any port 22 proto tcp
 
 # Enable UFW:
-sudo ufw enable
+sudo ufw --force enable
 
 # (Optional) Check the status:
 sudo ufw status verbose
