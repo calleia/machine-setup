@@ -18,7 +18,7 @@ sudo ufw --force reset
 # Deny all incoming connections:
 sudo ufw default deny incoming
 
-# Deny all outgoing connections:
+# Allow all outgoing connections:
 sudo ufw default allow outgoing
 
 # Allow inbound SSH from current client IP:
