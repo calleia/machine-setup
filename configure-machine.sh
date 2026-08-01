@@ -6,7 +6,7 @@ read -p "Enter your name: " name
 read -p "Enter your email: " email
 
 echo "Received name: $name"
-echo "REceived email: $email"
+echo "Received email: $email"
 
 echo "Setting up firewall (ufw)..."
 bash ./ufw.sh
