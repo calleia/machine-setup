@@ -1,12 +1,13 @@
 # machine-setup
 
 One command to turn a fresh Linux VM into a working development machine:
-firewall locked down, SSH key generated, Git identity set, and commits signed.
+firewall locked down, SSH key generated, Git identity set, commits signed, and
+optionally this repository's remotes switched to SSH.
 
 ## What it does
 
-Running `configure-machine.sh` prompts for your name and email, then runs four
-steps in order:
+Running `configure-machine.sh` prompts for your name, your email, and whether to
+switch this repository's remotes to SSH, then runs these steps in order:
 
 | Step | Script | Effect |
 | --- | --- | --- |
@@ -14,6 +15,7 @@ steps in order:
 | 2 | `generate-ssh-key.sh` | Creates an ed25519 key at `~/.ssh/id_ed25519`, commented with your email |
 | 3 | `git.sh` | Sets global `user.name` and `user.email` |
 | 4 | `sign-local-commits.sh` | Configures Git to sign every commit with that SSH key |
+| 5 | `ssh-remote.sh` | **Only if you answer `y`:** rewrites this repository's GitHub HTTPS remotes to SSH (`git@github.com:owner/repo.git`). Answering anything else leaves the remotes as they are |
 
 ## Requirements
 
@@ -66,6 +68,26 @@ Add `~/.ssh/id_ed25519.pub` to GitHub twice — once as an **authentication key*
 and once as a **signing key**. They are separate entries, and commits will not
 show as Verified until the signing key is registered.
 
+### HTTPS clones and SSH remotes
+
+Git picks how to authenticate from the remote URL, not from the keys on the
+machine. A repository cloned over HTTPS keeps asking for a username and token on
+every `fetch` or `push` (unless a credential helper stores them), even after
+the SSH key above is on GitHub. Only `git@github.com:...` remotes use the key.
+
+If you cloned this repository over HTTPS, answer `y` to the remote prompt, or
+switch it afterwards. Once the authentication key is on GitHub, confirm SSH
+works:
+
+```bash
+bash ssh-remote.sh /path/to/repo   # defaults to the current directory
+ssh -T git@github.com              # accept the host fingerprint on first use
+git fetch
+```
+
+Until the key is added as an **authentication key**, fetches over the SSH
+remote fail with `Permission denied (publickey)`.
+
 Check the result:
 
 ```bash
@@ -82,4 +104,5 @@ bash ufw.sh
 bash generate-ssh-key.sh "you@example.com"
 bash git.sh "you@example.com" "Your Name"
 bash sign-local-commits.sh
+bash ssh-remote.sh /path/to/repo
 ```
